@@ -4,5 +4,7 @@
 
 ## Key features
 **Noise simulation**: efficient simulation of noise; realistic noise models tailored for superconducting quantum devices are included.
+
 **General qudit support**: handles systems with arbitrary local dimension.
+
 **Variational compilation**: Implements variational algorithms for state preparation and compilation, optimizing circuit execution under hardware constraints.
