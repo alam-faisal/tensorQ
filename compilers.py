@@ -4,6 +4,7 @@ from itertools import product
 from scipy.optimize import minimize
 from tqdm import tqdm
 import pickle, random
+from numpy.linalg import qr 
 
 # only for qubits
 
@@ -184,11 +185,27 @@ def msp_job(in_states, out_states, skeleton, local_dim=2, max_sweeps=500, max_in
             
     return sols, data
 
+
+def construct_unitary(in_strings, out_states, local_dim=2):
+    in_mat = np.array([string_to_sv(in_str, local_dim) for in_str in in_strings])
+    out_mat = np.array(out_states)
+    A = out_mat.T @ in_mat
+    Q, _ = qr(A, mode='reduced')
+    
+    true_cols = [int(in_str, local_dim) for in_str in in_strings]
+    for col in true_cols: 
+        Q[:,col] = A[:,col]
+    return Q
+
 def unitary_embedding(in_strings, out_states, local_dim=2): 
+    # deprecated
+    print("This function is deprecated. Use construct_unitary instead.")
+
     n = len(out_states[0])
     
     in_states = [string_to_sv(in_str, local_dim) for in_str in in_strings]
-    A = (np.array(out_states).conj().T @ np.array(in_states))
+    #A = (np.array(out_states).conj().T @ np.array(in_states))
+    A = (np.array(out_states).T @ np.array(in_states))
     
     true_rows = [int(in_str, local_dim) for in_str in in_strings]
     space = scipy.linalg.null_space(A.T)

@@ -268,10 +268,13 @@ class MPO(TensorNetwork):
     
     def trace(self, scaled=True): 
         scale = self.local_dim if scaled else 1.0
-        tr = ncon((self.sites[0]), ([-1,-2,1,1]))/scale
-        for i in range(1,self.num_sites): 
-            tr = ncon((tr, self.sites[i]), ([-1,1],[1,-2,2,2]))/scale
-        return np.trace(tr)
+        if self.num_sites == 1:
+            return np.trace(self.sites[0])
+        else: 
+            tr = ncon((self.sites[0]), ([-1,-2,1,1]))/scale
+            for i in range(1,self.num_sites): 
+                tr = ncon((tr, self.sites[i]), ([-1,1],[1,-2,2,2]))/scale
+            return np.trace(tr)
     
     def to_matrix(self): 
         tensor = self.sites[0]
@@ -345,8 +348,10 @@ class MPDO(MPO):
         sites = copy.deepcopy(self.sites)
         virt_site = sites.pop(site_idx)
         virt_site = ncon((virt_site, vector, vector.conj()), ([-1,-2,1,2],[1],[2]))
-        
-        if site_idx == self.num_sites - 1: 
+
+        if self.num_sites == 1: 
+            sites = [virt_site]
+        elif site_idx == self.num_sites - 1: 
             sites[-1] = ncon((sites[-1], virt_site), ([-1,1,-3,-4],[1,-2]))
         else: 
             sites[site_idx] = ncon((virt_site, sites[site_idx]), ([-1,1],[1,-2,-3,-4]))
@@ -383,3 +388,7 @@ class MPDO(MPO):
                     site[i,j,:,:] = np.diag(np.diag(site[i,j,:,:]))
             sites[k] = site
         return MPDO(sites)
+    
+    def conj(self): 
+        sites = [copy.deepcopy(site).conj().transpose(0,1,3,2) for site in self.sites]
+        return type(self)(sites)

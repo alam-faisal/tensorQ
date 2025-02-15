@@ -33,6 +33,15 @@ class TI_MPS(MPS):
 ######################################
 ############### HAAR #################
 ######################################
+    
+def random_unitary(n, local_dim=2): 
+    # generates a random local_dim^n x local_dim^n unitary matrix
+    a = np.random.rand(local_dim**n,local_dim**n) + 1j*np.random.rand(local_dim**n,local_dim**n)
+    q,r = np.linalg.qr(a)
+    d = np.diagonal(r)
+    ph = d/np.abs(d)
+    q *= ph
+    return q
 
 def haar_purity(num_sites, k_copies, local_dim=2, ti=False, scaled=False): 
     """ if scaled, returns purity * r**(num_sites*k_copies) where r is the effective local dimension """

@@ -249,7 +249,7 @@ def SX12(indices): return Gate("SX12",
 
 def H01(indices): return Gate("H01", 
                               indices, 
-                              np.array([[1,1,0],[1,-1,0],[0,0,1]])/np.sqrt(2))
+                              np.array([[1/np.sqrt(2),1/np.sqrt(2),0],[1/np.sqrt(2),-1/np.sqrt(2),0],[0,0,1]]))
 
 def SDG01(indices): return Gate("SDG01", 
                               indices, 

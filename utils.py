@@ -83,7 +83,7 @@ def hellinger_fidelity(rho1, rho2):
 def two_norm_fidelity(rho1, rho2): 
     if type(rho1) == np.ndarray:
         return np.trace(rho1.conj().T @ rho2).real
-    elif type(rho1) == MPO: 
+    elif isinstance(rho1, MPO): 
         return (rho1.conj() @ rho2).trace(scaled=False).real
     else: 
         raise TypeError(f"provided density operator is not of valid type; must be {np.ndarray} or {MPO} not {type(rho1)}")
